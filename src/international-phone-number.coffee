@@ -2,7 +2,7 @@
 # https://github.com/mareczek/international-phone-number
 
 "use strict"
-angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumber', ($timeout) ->
+angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumber', ['$timeout', ($timeout) ->
 
   restrict:   'A'
   require: '^ngModel'
@@ -78,15 +78,23 @@ angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumb
       value.replace(/[^\d]/g, '')
 
     ctrl.$validators.internationalPhoneNumber = (value) ->
+      required = attrs['required'] or attrs['ngRequired'] == true
       if !value
-        return value
+        if required then return false
+        return ''
       else
-        return element.intlTelInput("isValidNumber")
+        country = element.intlTelInput('getSelectedCountryData')
+        if value == country.dialCode
+          if required then return false
+          return true;
+        return element.intlTelInput('isValidNumber')
 
 
-    element.on 'blur keyup change', (event) ->
+    element.on 'keyup change', (event) ->
       scope.$apply read
 
     element.on '$destroy', () ->
       element.intlTelInput('destroy');
       element.off 'blur keyup change'
+
+]
