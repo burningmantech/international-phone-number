@@ -96,7 +96,7 @@
               return element.intlTelInput('isValidNumber');
             }
           };
-          element.on('keyup change', function(event) {
+          element.on('blur keyup change', function(event) {
             return scope.$apply(read);
           });
           return element.on('$destroy', function() {
