@@ -86,7 +86,7 @@ angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumb
         country = element.intlTelInput('getSelectedCountryData')
         if value == country.dialCode
           if required then return false
-          return true;
+          return true
         return element.intlTelInput('isValidNumber')
 
 
