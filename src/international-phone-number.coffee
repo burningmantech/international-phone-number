@@ -90,7 +90,7 @@ angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumb
         return element.intlTelInput('isValidNumber')
 
 
-    element.on 'keyup change', (event) ->
+    element.on 'blur keyup change', (event) ->
       scope.$apply read
 
     element.on '$destroy', () ->
