@@ -75,6 +75,16 @@ angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumb
 
     ctrl.$parsers.push (value) ->
       return value if !value
+      # In nationalMode use the value returned by getNumber.
+      if options.nationalMode
+        try
+          intlNumber = element.intlTelInput('getNumber')
+          # getNumber returns an object if you give it an invalid number.
+          # This can happen if you click before debounce updates. Obscure bug.
+          if intlNumber and typeof(intlNumber) == 'string'
+            value = intlNumber
+        catch err
+          console.error('Invalid international phone number', err)
       value.replace(/[^\d]/g, '')
 
     ctrl.$validators.internationalPhoneNumber = (value) ->
@@ -83,10 +93,6 @@ angular.module("internationalPhoneNumber", []).directive 'internationalPhoneNumb
         if required then return false
         return ''
       else
-        country = element.intlTelInput('getSelectedCountryData')
-        if value == country.dialCode
-          if required then return false
-          return true
         return element.intlTelInput('isValidNumber')
 
 

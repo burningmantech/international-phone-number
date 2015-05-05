@@ -72,13 +72,25 @@
             }
           });
           ctrl.$parsers.push(function(value) {
+            var err, intlNumber;
             if (!value) {
               return value;
+            }
+            if (options.nationalMode) {
+              try {
+                intlNumber = element.intlTelInput('getNumber');
+                if (intlNumber && typeof intlNumber === 'string') {
+                  value = intlNumber;
+                }
+              } catch (_error) {
+                err = _error;
+                console.error('Invalid international phone number', err);
+              }
             }
             return value.replace(/[^\d]/g, '');
           });
           ctrl.$validators.internationalPhoneNumber = function(value) {
-            var country, required;
+            var required;
             required = attrs['required'] || attrs['ngRequired'] === true;
             if (!value) {
               if (required) {
@@ -86,13 +98,6 @@
               }
               return '';
             } else {
-              country = element.intlTelInput('getSelectedCountryData');
-              if (value === country.dialCode) {
-                if (required) {
-                  return false;
-                }
-                return true;
-              }
               return element.intlTelInput('isValidNumber');
             }
           };
